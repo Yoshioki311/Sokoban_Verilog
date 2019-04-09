@@ -1,0 +1,116 @@
+module connect
+		(
+			clock,
+			resetn,
+			start,
+			continue,
+			restart,
+			quit,
+			up, down,
+			left, right,
+			x_o,
+			y_o,
+			colour_o,
+			wren,
+			current,
+			next
+		);
+	
+	// Utility
+	input clock, resetn;
+	// Top level control
+	input start, continue, restart, quit;
+	// Data
+	input up, down, left, right;
+	// Output
+	output [7:0] x_o;
+	output [6:0] y_o;
+	output [2:0] colour_o;
+	output reg wren;
+	output [3:0] current, next;
+	
+	// Wires
+	wire key_pressed;
+	wire ld_map, reset_valid;
+	wire update_char, update_box;
+	wire check_char, check_box;
+	wire draw_char, draw_box;
+	wire clear_char;
+	wire char_empty, char_obs, char_box;
+	wire box_empty;
+	wire win;
+	
+	// XOR?
+	assign key_pressed = up | down | left | right;
+	// assign wren = ld_map | clear_sprite | draw_new;
+	// create a delay?
+	always@(posedge clock) begin
+		if(ld_map | clear_char | draw_char |draw_box)
+			wren <= 1'b1;
+		else
+			wren <= 1'b0;
+	end
+	
+	
+	game_control c0(
+			.clock(clock),
+			.resetn(resetn),
+			
+			.start(start),
+			.continue(continue),
+			.restart(restart),
+			.quit(quit),
+			
+			.key_pressed(key_pressed),
+			
+			.char_empty(char_empty),
+			.char_obs(char_obs),
+			.char_box(char_box),
+			.box_empty(box_empty),
+			.win(win),
+			
+			.ld_map(ld_map),
+			.reset_valid(reset_valid),
+			
+			.check_char(check_char),
+			.check_box(check_box),
+			.update_char(update_char),
+			.update_box(update_box),
+			.draw_char(draw_char),
+			.draw_box(draw_box),
+			.clear_char(clear_char),
+			
+			.current_state(current),
+			.next_state(next));
+			
+	data d0(
+			.clock(clock),
+			.resetn(resetn),
+			
+			.ld_map(ld_map),
+			.reset_valid(reset_valid),
+			
+			.check_char(check_char),
+			.check_box(check_box),
+			.update_char(update_char),
+			.update_box(update_box),
+			.draw_char(draw_char),
+			.draw_box(draw_box),
+			.clear_char(clear_char),
+			
+			.up(up), 
+			.down(down),
+			.left(left), 
+			.right(right),
+			
+			.char_empty(char_empty),
+			.char_obs(char_obs),
+			.char_box(char_box),
+			.box_empty(box_empty),
+			.win(win),
+			
+			.x_out(x_o),
+			.y_out(y_o),
+			.colour_out(colour_o));
+	
+endmodule

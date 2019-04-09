@@ -1,0 +1,52 @@
+module controlmodule control();
+	input 
+	output 
+	
+	// Utility signals
+	input clock
+	// Control signals
+	output reg
+	
+	// States
+	reg [2:0] current_state, next_state;
+	
+	localparam S_START        = ,
+				  S_LOAD_MAP     = ,
+				  S_WAIT_MOVE    = ,
+				  S_CLEAR_OLD    = ,
+				  S_DRAW_NEW     = ,
+				  S_END          = ;
+	
+	// State table
+	always@(*) begin
+		case(current_state)
+			
+		default: next_state = ;
+		endcase
+	end
+	
+	
+	// Output logic
+	always@(*) begin
+		
+		case(current_state)
+			
+		endcase
+	end
+	
+	// current_state register
+	always@(posedge clock) begin
+		if(!resetn)
+			current_state <= S_HOLD;
+		else if(clr)
+			current_state <= S_CLEAR;
+		else
+			current_state <= next_state;
+	end
+endmodule
+
+module datapath();
+	input
+	output
+	
+endmodule

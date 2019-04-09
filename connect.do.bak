@@ -1,0 +1,32 @@
+vlib work
+vlog part3.v
+vsim connect
+
+log {/*}
+add wave {/*}
+
+# Input
+# clock, resetn, color_in 
+# Output
+# x_loc, y_loc, color, wren
+
+# Set clock
+force {clock} 1 0ps, 0 {10ps} -r 20ps
+
+# Reset
+force {resetn} 0
+
+force {color_in[2]} 0
+force {color_in[1]} 0
+force {color_in[0]} 0
+
+run 10ps
+
+# 
+force {resetn} 1
+
+force {color_in[2]} 1
+force {color_in[1]} 1
+force {color_in[0]} 1
+
+run 5000ps

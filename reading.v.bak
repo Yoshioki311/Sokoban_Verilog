@@ -1,0 +1,51 @@
+module read_arena(address, clock, out);
+	input [14:0] address;
+	input clock;
+	output [2:0] out;
+	
+	arena1_map map1(
+		.address(address), 
+		.clock(clock), 
+		.data(3'b000),  
+		.wren(1'b0), 
+		.q(out));
+endmodule
+
+module draw_player (address, clock, out);
+	input [5:0] address;
+	input clock;
+	output [2:0] out;
+	
+	player_ram player1(
+		.address(address),
+		.clock(clock),
+		.data(3'b000),
+		.wren(1'b0),
+		.q(out));
+endmodule
+
+module draw_box (address, clock, out);
+	input [5:0] address;
+	input clock;
+	output [2:0] out;
+	
+	box_ram box(
+		.address(address),
+		.clock(clock),
+		.data(3'b000),
+		.wren(1'b0),
+		.q(out));
+endmodule
+
+module draw_path (address, clock, out);
+	input [5:0] address;
+	input clock;
+	output [2:0] out;
+	
+	path_ram path(
+		.address(address),
+		.clock(clock),
+		.data(3'b000),
+		.wren(1'b0),
+		.q(out));
+endmodule

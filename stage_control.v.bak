@@ -1,0 +1,51 @@
+module stage();
+	input 
+	output
+	
+	reg [3:0] current_state, next_state;
+	reg [2:0] stage
+	
+	localparam S_TITLE           = ,
+				  S_SELECT          = ,
+				  S_STAGE_1         = ,
+				  S_STAGE_2         = ,
+				  S_STAGE_3         = ,
+				  S_STAGE_4         = ,
+				  S_STAGE_5         = ,
+				  S_CONTINUE        = ;
+				  
+	// State table
+	always@(*) begin
+		case(current_state)
+			S_TITLE: begin
+							if(/*stage_select*/) next_state = S_SELECT;
+							else if(/*start*/) next_state = S_STAGE_1;
+						end
+			S_SELECT: begin
+							if(/*stage 1*/) next_state = S_STAGE_1;
+							else if(/*stage 2*/) next_state = S_STAGE_2;
+							else if(/*stage 3*/) next_state = S_STAGE_3;
+							else if(/*stage 4*/) next_state = S_STAGE_4;
+							else if(/*stage 5*/) next_state = S_STAGE_5;
+						 end
+			S_STAGE_1: next_state = doneState ? S_CONTINUE : S_STAGE_1;
+			S_STAGE_2: next_state = doneState ? S_CONTINUE : S_STAGE_2;
+			S_STAGE_3: next_state = doneState ? S_CONTINUE : S_STAGE_3;
+			S_STAGE_4: next_state = doneState ? S_CONTINUE : S_STAGE_4;
+			S_STAGE_5: next_state = doneState ? S_CONTINUE : S_STAGE_5;
+			S_CONTINUE: begin
+								if(stage == 1 && /*continue*/) next_state = S_STAGE_2;
+								else if(stage == 2 && /*continue*/) next_state = S_STAGE_3;
+								else if(stage == 3 && /*continue*/) next_state = S_STAGE_4;
+								else if(stage == 4 && /*continue*/) next_state = S_STAGE_5;
+								else if(stage == 5 && /*continue*/) next_state = S_TITLE;
+							end
+	
+endmodule
+
+module stage_data();
+	input
+	output
+	
+	
+endmodule

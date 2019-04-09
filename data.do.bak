@@ -1,0 +1,103 @@
+vlib work
+vlog part3.v
+vsim datapath
+
+log {/*}
+add wave {/*}
+
+# Input
+# clock, resetn, go, black, clean, start, enable_xy_counter, color_in
+# Output
+# x_out, y_out, color_out
+
+# Set clock
+force {clock} 1 0ps, 0 {10ps} -r 20ps
+
+# Reset
+# State 101: S_CLEAR
+force {resetn} 0
+
+force {color_in[2]} 0
+force {color_in[1]} 0
+force {color_in[0]} 0
+
+force {go} 0
+force {black} 0
+force {clean} 1
+force {start} 0
+force {enable_xy_counter} 0
+
+run 10ps
+
+# Let go
+force {resetn} 1
+run 60ps
+
+# State 000: S_START
+force {color_in[2]} 1
+force {color_in[1]} 1
+force {color_in[0]} 1
+
+force {clean} 0
+force {start} 1
+run 20ps
+
+# State 001: S_DRAW
+force {start} 0
+force {go} 1
+run 320ps
+
+# State 010: S_WAIT
+force {go} 0
+run 600ps
+
+# State 011: S_ERASE
+force {go} 1
+force {black} 1
+run 320ps
+
+# State 100: S_UPDATE
+force {go} 0
+force {black} 0
+force {enable_xy_counter} 1
+run 20ps
+
+# State 001: S_DRAW
+force {go} 1
+force {enable_xy_counter} 0
+run 320ps
+
+# State 010: S_WAIT
+force {go} 0
+run 600ps
+
+# State 011: S_ERASE
+force {go} 1
+force {black} 1
+run 320ps
+
+# State 100: S_UPDATE
+force {go} 0
+force {black} 0
+force {enable_xy_counter} 1
+run 20ps
+
+# State 001: S_DRAW
+force {go} 1
+force {enable_xy_counter} 0
+run 320ps
+
+# State 010: S_WAIT
+force {go} 0
+run 600ps
+
+# State 011: S_ERASE
+force {go} 1
+force {black} 1
+run 320ps
+
+# State 100: S_UPDATE
+force {go} 0
+force {black} 0
+force {enable_xy_counter} 1
+run 20ps

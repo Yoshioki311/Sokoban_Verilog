@@ -1,0 +1,158 @@
+module game_control
+		(
+			clock, resetn,
+			start, continue, restart, quit,
+			key_pressed,
+			char_empty, char_obs, char_box, box_empty, win,
+			ld_map_1, ld_map_2, reset_valid, 
+			check_char, check_box, update_char, update_box, draw_char, draw_box, clear_char,
+			current_state, next_state
+		);
+	
+	// Utility
+	input clock, resetn;
+	// Top level control (directly from the board)
+	input start, continue, restart, quit, key_pressed;
+	// Feedback
+	input char_empty, char_obs, char_box, box_empty, win;
+	// Control
+	output reg ld_map_1, ld_map_2, reset_valid;
+	output reg check_char, check_box, update_char, update_box, draw_char, draw_box, clear_char;
+	
+	// Counter
+	reg [14:0] restart_counter;
+	reg [5:0] sprite_counter;
+	
+	// States
+	output reg [4:0] current_state, next_state;
+	
+	localparam S_TITLE                = 5'd0,
+				  S_STAGE_SELECT         = 5'd1, // NEW
+				  S_INSTRUCTIONS         = 5'd2, // NEW
+				  
+				  // Loading maps
+				  S_LOAD_MAP_1           = 5'd3,
+				  S_LOAD_MAP_2           = 5'd4, // NEW
+				  
+				  // Game States
+				  S_WAIT_MOVE            = 5'd5,
+				  S_HOLD_KEY             = 5'd6,
+				  S_CHECK_CHAR           = 5'd7,
+				  S_CHAR_FEEDBACK        = 5'd8,
+				  S_CHECK_BOX            = 5'd9,
+				  S_BOX_FEEDBACK         = 5'd10,
+				  S_UPDATE_BOX           = 5'd11,
+				  S_DRAW_NEW_BOX         = 5'd12,
+				  S_CLEAR_OLD_CHAR       = 5'd13,
+				  S_UPDATE_CHAR          = 5'd14,
+				  S_DRAW_NEW_CHAR        = 5'd15,
+				  S_WIN                  = 5'd16,
+				  
+				  // Continue
+				  S_DRAW_CLEAR           = 5'd17, // NEW
+				  S_CLEAR					 = 5'd18,
+				  S_DARW_TITLE           = 5'd19; // NEW
+	
+	// State table
+	always@(*) begin
+		case(current_state)
+			S_TITLE: next_state = start ? S_LOAD_MAP_1 : S_TITLE;
+			S_STAGE_SELECT:
+			S_INSTRUCTIONS:
+			S_LOAD_MAP_1: next_state = (restart_counter == 15'd19199) ? S_WAIT_MOVE : S_LOAD_MAP_1;
+			S_LOAD_MAP_2: 
+			S_WAIT_MOVE: // next_state = key_pressed ? S_HOLD_KEY : S_WAIT_MOVE;
+							begin
+								if(restart) next_state = S_LOAD_MAP_1;
+								else if(quit) next_state = S_TITLE;
+								else if(key_pressed) next_state = S_HOLD_KEY;
+							end
+			S_HOLD_KEY: next_state = key_pressed ? S_HOLD_KEY : S_CHECK_CHAR;
+			S_CHECK_CHAR: next_state = S_CHAR_FEEDBACK;
+			S_CHAR_FEEDBACK: // next_state = can_move ? S_CLEAR_OLD_CHAR : S_WAIT_MOVE;
+							begin
+								if(char_empty) next_state = S_CLEAR_OLD_CHAR;
+								else if(char_obs) next_state = S_WAIT_MOVE;
+								else if(char_box) next_state = S_CHECK_BOX;
+							end
+			S_CHECK_BOX: next_state = S_BOX_FEEDBACK;
+			S_BOX_FEEDBACK: next_state = box_empty ? S_UPDATE_BOX : S_WAIT_MOVE;
+			S_UPDATE_BOX: next_state = S_DRAW_NEW_BOX;
+			S_DRAW_NEW_BOX: next_state = (sprite_counter == 6'd63) ? S_CLEAR_OLD_CHAR : S_DRAW_NEW_BOX;
+			S_CLEAR_OLD_CHAR: next_state = (sprite_counter == 6'd63) ? S_UPDATE_CHAR : S_CLEAR_OLD_CHAR;
+			S_UPDATE_CHAR: next_state = S_DRAW_NEW_CHAR;
+			S_DRAW_NEW_CHAR: next_state = (sprite_counter == 6'd63) ? S_WIN : S_DRAW_NEW_CHAR;
+			S_WIN: next_state = (!win) ? S_WAIT_MOVE : S_CLEAR;
+			S_DRAW_CLEAR:
+			S_CLEAR: next_state = continue ? S_TITLE : S_CLEAR;
+			S_DRAW_TITLE: 
+			default: next_state = S_TITLE;
+		endcase
+	end
+	
+	
+	// Output logic
+	always@(*) begin
+		ld_map = 1'b0;
+		reset_valid = 1'b0;
+		check_char = 1'b0;
+		check_box = 1'b0;
+		update_box = 1'b0;
+		draw_box = 1'b0;
+		clear_char = 1'b0;
+		update_char = 1'b0;
+		draw_char = 1'b0;
+		
+		case(current_state)
+			// S_TITLE: 
+			S_STAGE_SELECT:
+			S_INSTRUCTIONS: 
+			S_LOAD_MAP_1: ld_map_1 = 1'b1;
+			S_LOAD_MAP_2: 
+			S_WAIT_MOVE: reset_valid = 1'b1; 
+			S_CHECK_CHAR: check_char = 1'b1;
+			// S_HOLD_KEY:
+			// S_CHAR_FEEDBACK:
+			S_CHECK_BOX: check_box = 1'b1;
+			// S_BOX_FEEDBACK: 
+			S_UPDATE_BOX: update_box = 1'b1;
+			S_DRAW_NEW_BOX: draw_box = 1'b1;
+			S_CLEAR_OLD_CHAR: clear_char = 1'b1;
+			S_UPDATE_CHAR: update_char = 1'b1;
+			S_DRAW_NEW_CHAR: draw_char = 1'b1;
+			// S_WIN:
+			S_DRAW_CLEAR
+			// S_CLEAR:
+		endcase
+	end
+	
+	// Restart Counter
+	always@(posedge clock) begin
+		if(!resetn)
+			restart_counter <= 0;
+		else if(current_state != S_LOAD_MAP_1)
+			restart_counter <= 0;
+		else
+			restart_counter <= restart_counter + 1;
+	end
+	
+	// Sprite Counter 
+	always@(posedge clock) begin
+		if(!resetn)
+			sprite_counter <= 0;
+		else if(current_state != S_CLEAR_OLD_CHAR && 
+				  current_state != S_DRAW_NEW_CHAR &&
+				  current_state != S_DRAW_NEW_BOX)
+			sprite_counter <= 0;
+		else
+			sprite_counter <= sprite_counter + 1;
+	end
+	
+	// current_state register
+	always@(posedge clock) begin
+		if(!resetn)
+			current_state <= S_TITLE;
+		else
+			current_state <= next_state;
+	end
+endmodule

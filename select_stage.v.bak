@@ -1,0 +1,18 @@
+module stage_select();
+	// Utility signal
+	input clock, resetn;
+	input go_select, left, right
+	// Output
+	output reg done_select, ;
+	
+	reg [4:0] current_state, next_state;
+	
+	localparam S_IDLE          = ,
+				  S_SELECT        = ,
+				  S_CHANGE_HOLD   = ,
+				  S_CHANGE        = 
+				  
+	
+	
+endmodule
+	

@@ -1,0 +1,157 @@
+vlib work
+vlog part3.v
+vsim control
+
+log {/*}
+add wave {/*}
+
+# Input
+# clock, resetn, frame_enable
+
+# Output
+# go, erase, clear, xy_counter_enable
+
+# Set clock
+force {clock} 1 0ps, 0 {10ps} -r 20ps
+
+# Reset
+force {resetn} 0
+force {frame_enable} 0
+run 10ps
+
+# Let go
+# State: S_CLEAR
+force {resetn} 1
+force {frame_enable} 0
+run 420ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 20ps
+
+# Enable frame counter
+force {frame_enable} 1
+run 20ps
+
+# Disable frame counter
+force {frame_enable} 0
+run 460ps
+
+
